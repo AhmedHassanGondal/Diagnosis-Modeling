@@ -1,5 +1,7 @@
 # Intelligent Patient Flow and Diagnosis Modeling in Smart Hospitals
 
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white) ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+
 This project implements stochastic processes and machine learning models to analyze and simulate patient flow and diagnosis in a hospital setting. It provides a comprehensive solution for understanding patient journeys through different hospital departments and predicting diagnoses based on patient characteristics.
 
 ## Overview
