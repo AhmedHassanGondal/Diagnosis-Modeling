@@ -34,7 +34,7 @@ serve and test the model end to end.
 ## 🗂️ Structure
 
 ```
-Diagnosis-Modeling/
+diagnosis-modeling/
 ├── models/
 │   ├── diagnosis_model.py          # HospitalDiagnosisModel
 │   └── diagnosis_model.joblib      # trained artifact (committed)
