@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Environments
+.venv/
+venv/
+ENV/
+
+# Note: data/hospital_patient_dataset.csv and models/diagnosis_model.joblib are
+# intentionally committed so the project (and test_diagnosis.py) run out of the box.

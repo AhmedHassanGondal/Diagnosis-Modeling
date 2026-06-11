@@ -1,102 +1,102 @@
-# Intelligent Patient Flow and Diagnosis Modeling in Smart Hospitals
+# 🏥 Hospital Diagnosis Modeling
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white) ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 
-A project exploring stochastic processes and machine learning for modeling patient
-flow and diagnosis prediction in a hospital setting.
-
-> **Status — work in progress.** This repository currently contains a minimal
-> Streamlit starter app and test scaffolding. The full modeling system described
-> under [Planned scope](#planned-scope-not-yet-implemented) is **not yet
-> implemented here**. The sections below describe only what is actually present.
-
-## Current contents
+A machine-learning system that predicts a patient's **diagnosis** from a small
+set of admission features:
 
 ```
-.
-├── simple_app.py        # Minimal Streamlit app (smoke test that Streamlit works)
-├── test_imports.py      # Prints versions of the core dependencies, checks imports
-├── test_diagnosis.py    # Scaffold test for a diagnosis model (see note below)
-├── requirements.txt     # Project dependencies
-└── README.md
+Age, Length_of_Stay, Department, Medical_Condition  ->  Diagnosis
 ```
 
-> **Note:** `test_diagnosis.py` imports `models.diagnosis_model.HospitalDiagnosisModel`
-> and loads `models/diagnosis_model.joblib`. Neither the `models/` package nor the
-> saved model file exists in this repository yet, so this test will fail until the
-> diagnosis model is added.
+It ships a reusable model class, a reproducible synthetic dataset, a training
+script, and an interactive Streamlit app — everything needed to train, evaluate,
+serve and test the model end to end.
 
-## Installation and setup
+## ✨ What's here
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/AhmedHassanGondal/Diagnosis-Modeling.git
-   cd Diagnosis-Modeling
-   ```
+- **`models/diagnosis_model.py`** — `HospitalDiagnosisModel`, an sklearn
+  `Pipeline` (one-hot + scaling + classifier) supporting Random Forest, Logistic
+  Regression or SVM, with `train` / `predict` / `predict_proba` / `save_model` /
+  `load_model`.
+- **`data_generator.py`** — deterministic synthetic hospital dataset where the
+  diagnosis depends on the medical condition, modulated by age, department and
+  length of stay.
+- **`train_model.py`** — trains the model, reports accuracy / macro-F1, and saves
+  `models/diagnosis_model.joblib`.
+- **`app.py`** — Streamlit UI that scores a patient and shows the probability
+  distribution over diagnoses.
+- **`test_diagnosis.py` / `test_imports.py`** — load the saved model and verify a
+  prediction, and check the environment.
 
-2. Install the required packages:
-   ```
-   pip install -r requirements.txt
-   ```
+## 🗂️ Structure
 
-3. Run the starter Streamlit app:
-   ```
-   streamlit run simple_app.py
-   ```
+```
+Diagnosis-Modeling/
+├── models/
+│   ├── diagnosis_model.py          # HospitalDiagnosisModel
+│   └── diagnosis_model.joblib      # trained artifact (committed)
+├── data/
+│   └── hospital_patient_dataset.csv  # synthetic dataset (committed)
+├── data_generator.py
+├── train_model.py
+├── app.py                          # Streamlit app
+├── simple_app.py                   # minimal Streamlit smoke test
+├── test_diagnosis.py
+├── test_imports.py
+└── requirements.txt
+```
 
-4. (Optional) Verify your environment has the dependencies installed:
-   ```
-   python test_imports.py
-   ```
+## 🚀 Quickstart
 
-## Planned scope (not yet implemented)
+```bash
+pip install -r requirements.txt
 
-The intended system combines stochastic processes, machine learning, and
-interactive visualizations to model and analyze patient flow, waiting times,
-resource utilization, and diagnosis prediction. None of the modules below are
-present in this repository yet — they describe the design goal:
+# (Optional) regenerate the dataset and retrain — artifacts are already committed
+python data_generator.py
+python train_model.py --model random_forest
 
-- **Patient Flow Simulation** — Markov chains for department transitions
-  (ER, Ward, ICU, Discharged).
-- **Hidden Markov Models** — infer unobservable patient health states
-  (Stable, Deteriorating, Critical) from observed symptoms/vitals.
-- **Poisson Arrival Process** — model patient arrivals with time-varying rates.
-- **Hospital Queuing Theory** — model waiting/service times per department
-  (M/M/c, M/G/c, priority queues).
-- **Bayesian Networks** — probabilistic relationships between symptoms,
-  diseases, and treatments.
-- **Diagnosis Prediction** — Random Forest, Logistic Regression, and SVM
-  classifiers over patient features.
-- **3D Interactive Visualizations** — immersive views of patient flow and models.
-- **Interactive Dashboard** — a unified Streamlit interface for all of the above.
+# Verify a prediction
+python test_diagnosis.py            # -> "Test passed!"
 
-### Intended dataset features
+# Launch the interactive app
+streamlit run app.py
+```
 
-A synthetic hospital-patient dataset is planned with demographics (Age, Gender,
-Smoking), hospital information (Department, Length of Stay, Medical Condition,
-Diagnosis), and symptom/vital-sign indicators (Chest Pain, Shortness of Breath,
-Fatigue, Cough, Excessive Thirst, ECG Abnormal).
+### Use the model directly
 
-## Key technologies
+```python
+from models.diagnosis_model import HospitalDiagnosisModel
 
-- **Python** — core language
-- **Streamlit** — interactive web app framework
-- **NumPy / Pandas** — data manipulation and analysis
-- **Matplotlib / Seaborn** — static visualization
-- **Plotly** — interactive 2D/3D visualization
-- **SciPy** — scientific computing and statistical distributions
-- **Scikit-learn** — machine learning algorithms
-- **hmmlearn** — Hidden Markov Model implementation
-- **NetworkX** — graph-based modeling for Bayesian networks
+model = HospitalDiagnosisModel(model_type="random_forest")
+model.load_model("models/diagnosis_model.joblib")
 
-(See `requirements.txt` for the full list.)
+diagnosis, probability = model.predict({
+    "Age": 50, "Length_of_Stay": 5,
+    "Department": "ER", "Medical_Condition": "Cardiac",
+})
+print(diagnosis, probability)        # e.g. "Condition A" 0.52
+```
 
-## License
+## 📊 Data
 
-This project is intended to be licensed under the MIT License. A `LICENSE` file
-is not yet included in the repository.
+The bundled dataset is **synthetic** (generated by `data_generator.py`) so the
+project runs offline and is fully reproducible. Features:
 
-## Acknowledgments
+| Feature | Values |
+| ------- | ------ |
+| `Age` | 18–90 |
+| `Length_of_Stay` | 1–20 days |
+| `Department` | ER, Ward, ICU |
+| `Medical_Condition` | Cardiac, Neuro, Injury |
+| `Diagnosis` (target) | Condition A, B, C |
 
-- Developed as part of a stochastic processes and healthcare analytics course.
-- Inspired by real-world hospital operations and patient flow modeling.
+To use real data, replace `data/hospital_patient_dataset.csv` with a file
+containing the same columns and re-run `train_model.py`.
+
+## 🧰 Tech stack
+
+Python · pandas · NumPy · scikit-learn (Pipeline, ColumnTransformer,
+RandomForest/LogReg/SVM) · joblib · Streamlit
